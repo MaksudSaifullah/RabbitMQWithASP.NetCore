@@ -1,29 +1,37 @@
 
-1.	What is RabbitMQ?
+1.What is RabbitMQ?
 
 RabbitMQ is the most widely deployed open source message broker. It supports various messaging protocols. It basically gives our applications a common platform for sending and receiving messages. This ensures that our message (data) is never lost and is successfully received by each intended consumer.  RabbitMQ makes the entire process seamless.
 
-Ina simple words, we will have a publisher that publishes messages to the message broker (RabbitMQ server). Now the server stores the message in a queue. To this particular queue, multiple consumers can subscribe. Whenever there is a new message, each of the subscribers would receive it. An application can act as both producer / consumer based on how you configure it and what the requirement demands.
+In a simple words, we will have a publisher that publishes messages to the message broker (RabbitMQ server). Now the server stores the message in a queue. To this particular queue, multiple consumers can subscribe. Whenever there is a new message, each of the subscribers would receive it. An application can act as both producer / consumer based on how you configure it and what the requirement demands.
 
 Apart from that, RabbitMQ provides a cool Dashboard for monitoring the messages and queues. We will be setting up this too later in this article!
 
-2.	Advantages of RabbitMQ
+2.Advantages of RabbitMQ
+
 There are quite a lot of advantages of using a queue based messaging solution rather than directly sending messages to the intended consumer. Here are few of the advantages.
-•	Better Scalability – Now, you will not have to depend on just one VM / processor / server to process your request. When it gets to the point where you first server finds it tough to process the incoming queue data, you can simply add another server that can share the load and improve the overall response time. This is quite easy with the queue concept in RabbitMQ.
 
+•Better Scalability – Now, you will not have to depend on just one VM / processor / server to process your request. When it gets to the point where you first server finds it tough to process the incoming queue data, you can simply add another server that can share the load and improve the overall response time. This is quite easy with the queue concept in RabbitMQ.
 
-•	Clean User Experience – You users are less likely to see any errors, thanks to the microservice based message broker architecture.
-•	Higher availability – Even if the main Microservice is down to a technical glitch on on-going update, the messages are never lost. It gets stored to the RabbitMQ server. Once the Service comes online, it consumes the pending messages and processes it.
+•Clean User Experience – You users are less likely to see any errors, thanks to the microservice based message broker architecture.
+
+•Higher availability – Even if the main Microservice is down to a technical glitch on on-going update, the messages are never lost. It gets stored to the RabbitMQ server. Once the Service comes online, it consumes the pending messages and processes it.
+
  ![image](https://user-images.githubusercontent.com/83159793/120458135-d8956400-c3b8-11eb-83d8-d2f206439129.png)
 
 Fig1: Micoservice communication via RabbitMQ
-3.	Setting up the Environment
-•	We will be working with ASP.NET Core 3.1 WebAPI using Visual Studio 2019 IDE. Make sure you have them up and running with the latest SDK.
-•	After that, we will need to setup the RabbitMQ server and dashboard.
-3.1	Installing ErLang
+
+3.Setting up the Environment
+
+•We will be working with ASP.NET Core 3.1 WebAPI using Visual Studio 2019 IDE. Make sure you have them up and running with the latest SDK.
+•After that, we will need to setup the RabbitMQ server and dashboard.
+
+3.1Installing ErLang
+
 Erlang is a programming language with which the RabbitMQ server is built on. Since we are installing the RabbitMQ Server locally to our Machine (Windows 10), make sure that you install Erlang first. Download the Installer from here – https://www.erlang.org/downloads/24.0 . At the time of writing, the latest available version of Erlang is 24.0. Install it in your machine with Administrator Rights.
 
-3.2	Installing RabbitMQ as a service in windows
+3.2Installing RabbitMQ as a service in windows
+
 We will be installing the RabbitMQ Server and a service within our Windows machine. Make sure that RabbitMQ Latest compatible with erlang
 https://www.rabbitmq.com/install-windows.html
 3.3	In case of failing to create cookie file (drive:)/ErLang
@@ -55,11 +63,14 @@ Fig4: RabbitMQ Dashboard
 Fig4: RabbitMQ server 
 	
 4. Getting Started – RabbitMQ with ASP.NET Core
+
 Now that our server is configured, let’s build the actual microservices that can interact with each other via RabbitMQ. Before proceeding, I highly recommend you to go through Microservice Architecture in ASP.NET Core to get a basic idea on how Microservice Architecture works. 
 So, I created a new Blank solution ‘MS1’. Here we will be adding 2 Microservices
 •	MS1
 •	MS2
+
 4.1	Inside MS1 class library do the following steps
+
 Add references from nuget 
 MassTransit (7.1.8)
 MassTransit.RabbitMQ (7.1.8)
@@ -70,8 +81,7 @@ MassTransit.AspNetCore(7.1.8)
 	Fig: Installed packages
 
 
-4.2	Add OrderController.cs class inside Controllers Folder with following code snippets
-
+4.2Add OrderController.cs class inside Controllers Folder with following code snippets
 
     [Route("api/[controller]")]
     [ApiController]
@@ -94,6 +104,7 @@ MassTransit.AspNetCore(7.1.8)
         }
      }
 Note: Here we name our service name as order-queue. We can name it what we want.
+
 4.3	Add Order.cs class inside ViewModel Folder with following code snippets
 
    public class Order
@@ -103,9 +114,9 @@ Note: Here we name our service name as order-queue. We can name it what we want.
         public int OrderQty { get; set; }
     }
 
-4.4	Change the Startup.cs class by the following code snippets
+4.4Change the Startup.cs class by the following code snippets
 
-  public void ConfigureServices(IServiceCollection services)
+  	public void ConfigureServices(IServiceCollection services)
         {
             services.AddMassTransit(x =>
             {
@@ -123,8 +134,7 @@ Note: Here we name our service name as order-queue. We can name it what we want.
             services.AddControllers();
         }
 
-4.5 Inside MS2 class library do the following steps
-	In order to reduce time, go to MS-1 and right click -> edit project file and copy the following lines and paste to MS-2 by editing project file:
+4.5 Inside MS2 class library do the following steps In order to reduce time, go to MS-1 and right click -> edit project file and copy the following lines and paste to MS-2 by editing project file:
   
 <ItemGroup>
     <PackageReference Include="MassTransit" Version="7.1.8" />
@@ -132,7 +142,7 @@ Note: Here we name our service name as order-queue. We can name it what we want.
     <PackageReference Include="MassTransit.RabbitMQ" Version="7.1.8" />
 </ItemGroup>
 
-4.6	Inside MS2 class library do the following steps add Order.cs class inside ViewModel Folder with following code snippets
+4.6Inside MS2 class library do the following steps add Order.cs class inside ViewModel Folder with following code snippets
 
     public class Order
     {
@@ -141,7 +151,7 @@ Note: Here we name our service name as order-queue. We can name it what we want.
         public int OrderQty { get; set; }
     }
 
-4.7	Create OrderConsumer.cs class and add these following lines to consume message from MS-1 via RabbitMQ
+4.7Create OrderConsumer.cs class and add these following lines to consume message from MS-1 via RabbitMQ
 
 public class OrderConsumer : IConsumer<Order>
    {
@@ -179,9 +189,10 @@ public class OrderConsumer : IConsumer<Order>
             		services.AddMassTransitHostedService();
 
             		services.AddControllers();
-   }
+   	}
 
-5.	Testing Phase
+5.Testing Phase
+	
 5.1 Scenario #1 – When the OrderConsumer is Online
 Now we are all set to test our application. Before run this application change the following configuration as follows. That’s it for our first Microservice, the publisher. Let’s build it and run. We will POST data to the order endpoint using POSTMAN. Here is the POST request we will pass to the order endpoint.
   ![image](https://user-images.githubusercontent.com/83159793/120458569-33c75680-c3b9-11eb-9349-f06bb74db7c5.png)
@@ -206,6 +217,7 @@ You can see that we are able to pass the Model to the First Microservice – MS-
 
 
 You can see the we have one un-Processed message. Also, we will be hitting our next breakpoint at the second Microservice MS-2 as well. Let’s verify the data.
+	
 5.2 Scenario #2 – When the OrderConsumer is Offline and back after N moments
 In this case, a more practical scenario where the consumer can be offline due to several reasons. When the consumer is offline, the publisher can still send the message to the RabbitMQ server queue. As soon as the consumer comes online, it should be able to consume the pending message. That’s the whole point of Message Broking right? Let’s check.
 So, I disable the Startup of the Consumer Project. Now only the MS-1 will run. This mimics the scenario where the consumer if offline.
