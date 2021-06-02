@@ -229,8 +229,9 @@ Let’s POST the message via POSTMAN to the publisher. We will get back a 200 Ok
  
 At the moment our MS-2 restored it will consume the services from RabbitMQ
 ![image](https://user-images.githubusercontent.com/83159793/120459156-bea85100-c3b9-11eb-8b88-dad471fc171e.png)
+	
 That’s a wrap for this article!
 
 Summary
-In this article, we have gone through Message Brokers, RabbitMQ, Advantages, Integrating RabbitMQ with ASP.NET Core using MassTransit. We also build a small prototype application to send data over the RabbitMQ Server. You can find the .
+In this article, we have gone through Message Brokers, RabbitMQ, Advantages, Integrating RabbitMQ with ASP.NET Core using MassTransit. We also build a small prototype application to send data over the RabbitMQ Server.
 
